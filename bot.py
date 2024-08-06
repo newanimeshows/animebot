@@ -9,7 +9,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Call
 import asyncio
 import re
 import os
-from aiohttp import web
+
 
 
 # Your Telegram bot token
@@ -767,26 +767,15 @@ def main():
     application.add_handler(CommandHandler('owner', owner_command))  # Register /owner command handler
     application.add_handler(CallbackQueryHandler(button, pattern='^start|weekly|trending|top|search|detail_|addfav_|removefav_|showfav'))
 
-    # Initialize the database and scheduler
+     # Initialize the database and scheduler
     init_db()
     init_welcome_db()
     scheduler = BackgroundScheduler()
     scheduler.add_job(scheduler_job, IntervalTrigger(minutes=1))
     scheduler.start()
-    
-    #Set up the web server for handling webhooks
-    app = web.Application()
-    app.router.add_post('/webhook', handle_updates)
-    runner = web.AppRunner(app)
-    await runner.setup()
-    site = web.TCPSite(runner, '0.0.0.0', int(os.getenv('PORT', 8080)))
-    await site.start()
-
-    print(f"Server started on port {os.getenv('PORT', 8080)}")
 
     # Start polling
-    await application.start_polling()
+    application.run_polling()
 
 if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())
+    main()
