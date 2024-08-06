@@ -9,7 +9,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Call
 import asyncio
 import re
 import os
-
+from aiohttp import web
 
 
 # Your Telegram bot token
@@ -618,7 +618,7 @@ async def start(update: Update, context: CallbackContext) -> None:
 
     if not has_been_welcomed_today(user_id):
         # First-time welcome message with image from local PC
-        image_path = 'images/animebot.jpg'  # Replace with the actual path to your image file
+        image_path = 'animebot.jpg'  # Replace with the actual path to your image file
         caption = '''🌟 Welcome to AnimeBot! 🌟
 
 Hello there! 👋 I'm AnimeBot, here to help you discover and explore the fascinating world of anime. Whether you're looking for the latest trending anime, top-rated shows, or simply want to search for something specific, I've got you covered!
@@ -767,15 +767,26 @@ def main():
     application.add_handler(CommandHandler('owner', owner_command))  # Register /owner command handler
     application.add_handler(CallbackQueryHandler(button, pattern='^start|weekly|trending|top|search|detail_|addfav_|removefav_|showfav'))
 
-     # Initialize the database and scheduler
+    # Initialize the database and scheduler
     init_db()
     init_welcome_db()
     scheduler = BackgroundScheduler()
     scheduler.add_job(scheduler_job, IntervalTrigger(minutes=1))
     scheduler.start()
+    
+    #Set up the web server for handling webhooks
+    app = web.Application()
+    app.router.add_post('/webhook', handle_updates)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', int(os.getenv('PORT', 8080)))
+    await site.start()
+
+    print(f"Server started on port {os.getenv('PORT', 8080)}")
 
     # Start polling
-    application.run_polling()
+    await application.start_polling()
 
 if __name__ == '__main__':
-    main()
+    import asyncio
+    asyncio.run(main())
