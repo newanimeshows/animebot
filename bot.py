@@ -15,7 +15,7 @@ import os
 # Your Telegram bot token
 
 TOKEN = os.getenv('BOT_TOKEN')  # Replace with your actual token in env of koyeb/hiruko/etc
-ain
+
 
 #The Info Of Owner
 
