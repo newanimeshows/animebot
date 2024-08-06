@@ -615,7 +615,7 @@ async def start(update: Update, context: CallbackContext) -> None:
 
     if not has_been_welcomed_today(user_id):
         # First-time welcome message with image from local PC
-        image_path = 'animebot.jpg'  # Replace with the actual path to your image file
+        image_path = 'images/animebot.jpg'  # Replace with the actual path to your image file
         caption = '''🌟 Welcome to AnimeBot! 🌟
 
 Hello there! 👋 I'm AnimeBot, here to help you discover and explore the fascinating world of anime. Whether you're looking for the latest trending anime, top-rated shows, or simply want to search for something specific, I've got you covered!
